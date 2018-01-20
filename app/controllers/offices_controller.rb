@@ -4,7 +4,8 @@ class OfficesController < ApplicationController
   # GET /offices
   # GET /offices.json
   def index
-    @offices = Office.all
+    # @offices = Office.all
+    @offices = Office.search(params[:search_postcode],params[:search_radius])
   end
 
   # GET /offices/1
@@ -24,11 +25,13 @@ class OfficesController < ApplicationController
   # POST /offices
   # POST /offices.json
   def create
-    @office = Office.new(office_params)
+    params_entry =Office.uri_lat_long(params[:office][:address])
+    params_postcode = Office.uri_postcode(params_entry[0],params_entry[1])
+    @office = Office.new(name: params[:office][:name],lat: params_entry[0],long: params_entry[1],address: params[:office][:address], postcode: params_postcode)
 
     respond_to do |format|
       if @office.save
-        format.html { redirect_to @office, notice: 'Office was successfully created.' }
+        format.html { redirect_to offices_path, notice: 'Office was successfully created.' }
         format.json { render :show, status: :created, location: @office }
       else
         format.html { render :new }
@@ -69,6 +72,6 @@ class OfficesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def office_params
-      params.require(:office).permit(:name, :lat, :lat, :long, :long, :postcode)
+      params.require(:office).permit(:name, :lat,:long, :postcode,:address)
     end
 end
