@@ -9,22 +9,20 @@
       <%= submit_tag "Search", :name => nil %>
     </p>
 <% end %>
-
-
 <table>
   <thead>
-    <tr>
-      <th>Name</th>
-      <th>Lat</th>
-      <th>Long</th>
-      <th>Address</th>
-      <th>Postcode</th>
-      <th colspan="3"></th>
-    </tr>
+  <tr>
+    <th>Name</th>
+    <th>Lat</th>
+    <th>Long</th>
+    <th>Address</th>
+    <th>Postcode</th>
+    <th colspan="3"></th>
+  </tr>
   </thead>
 
   <tbody>
-    <% @offices.each do |office| %>
+  <% @offices.each do |office| %>
       <tr>
         <td><%= office.name %></td>
         <td><%= office.lat %></td>
@@ -35,7 +33,7 @@
         <td><%= link_to 'Edit', edit_office_path(office) %></td>
         <td><%= link_to 'Destroy', office, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
-    <% end %>
+  <% end %>
   </tbody>
 </table>
 

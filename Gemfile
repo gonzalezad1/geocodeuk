@@ -16,10 +16,17 @@ gem 'puma', '~> 3.7'
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
-gem 'geokit-rails'
+gem 'geokit-rails', '~> 2.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
-
+group :test do
+  # gem 'factory_bot_rails'
+  gem 'rspec-rails', '~> 3.7'
+  gem 'rails-controller-testing'
+  # gem 'factory_bot'
+  # gem "factory_girl_rails" , :require => false
+end
+gem 'simplecov', :require => false, :group => :test
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.2'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks

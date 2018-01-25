@@ -1,10 +1,10 @@
 class OfficesController < ApplicationController
   before_action :set_office, only: [:show, :edit, :update, :destroy]
-
+  before_action :set_api_params, only: [:create]
+  before_action :set_postcode_params, only: [:create]
   # GET /offices
   # GET /offices.json
   def index
-    # @offices = Office.all
     @offices = Office.search(params[:search_postcode],params[:search_radius])
   end
 
@@ -25,10 +25,7 @@ class OfficesController < ApplicationController
   # POST /offices
   # POST /offices.json
   def create
-    params_entry =Office.uri_lat_long(params[:office][:address])
-    params_postcode = Office.uri_postcode(params_entry[0],params_entry[1])
-    @office = Office.new(name: params[:office][:name],lat: params_entry[0],long: params_entry[1],address: params[:office][:address], postcode: params_postcode)
-
+    @office = Office.new(name: params[:office][:name],lat: @params_entry.lat,lng: @params_entry.lng,address: params[:office][:address], postcode: @params_postcode)
     respond_to do |format|
       if @office.save
         format.html { redirect_to offices_path, notice: 'Office was successfully created.' }
@@ -49,7 +46,7 @@ class OfficesController < ApplicationController
         format.json { render :show, status: :ok, location: @office }
       else
         format.html { render :edit }
-        format.json { render json: @office.errors, status: :unprocessable_entity }
+        format.json { render json: @office.errors, status: :unprocessable_entity, notice: 'Your address is not valid' }
       end
     end
   end
@@ -65,13 +62,24 @@ class OfficesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_office
-      @office = Office.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_office
+    @office = Office.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def office_params
-      params.require(:office).permit(:name, :lat,:long, :postcode,:address)
+  def set_api_params
+    @params_entry =Office.uri_lat_long(params[:office][:address])
+
+  end
+  def set_postcode_params
+    if @params_entry && @params_entry.lat && @params_entry.lng
+      @params_postcode = Office.uri_postcode(@params_entry.lat,@params_entry.lng)
+    else
+      flash[:notice] =  "Adress: #{params[:office][:address]} is not valid."
+      redirect_to offices_path
     end
+  end
+  def office_params
+    params.require(:office).permit(:name, :lat,:lng, :postcode,:address)
+  end
 end
